@@ -1,2 +1,19 @@
 <h1>TP TodoList</h1>
 
+<form (ngSubmit) = "onSubmit(data.value)">
+    <input type = "text" #data>
+</form>
+
+
+<ul *ngIf = "todoListObs | async as TDL" >
+    <li *ngFor = "let item of TDL.items; trackBy: trackById">
+        <input type="checkbox" name="isDone" [ngModel] = "item.isDone" (ngModelChange)="updateDone($event,item)"/>
+        <input type="text" name="label" [ngModel]="item.label" (ngModelChange) = "updateLabel($event, item)"/>
+        <button type="submit" name="delete" (click)="delete(item)">Supprimer</button>
+    </li>
+</ul>
+
+<pre>
+    {{ todoListObs | async | json }}
+</pre>
+
