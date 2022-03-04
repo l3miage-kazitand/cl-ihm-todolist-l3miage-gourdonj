@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { HistoryService } from './history.service';
 
 export interface TodoItem {
   readonly label: string;
@@ -18,10 +19,20 @@ let idItem = 0;
   providedIn: 'root'
 })
 export class TodolistService {
+
   private subj = new BehaviorSubject<TodoList>({label: 'L3 MIAGE', items: [] });
   readonly observable = this.subj.asObservable();
 
-  constructor() {
+  constructor(private historyService: HistoryService<TodoList>) {
+    let retrievedTDL = localStorage.getItem("myTodoList")
+    if(retrievedTDL!=null && retrievedTDL != "undefined"){
+      console.log(retrievedTDL)
+      this.subj.next(JSON.parse(retrievedTDL || "{label: 'L3 MIAGE', items: [] }"))
+    }
+    this.subj.subscribe(()=>{
+      localStorage.setItem('myTodoList',JSON.stringify(this.subj.value));
+      console.log(localStorage.getItem('myTodoList'))
+    })
   }
 
   create(...labels: readonly string[]): this {
@@ -35,6 +46,7 @@ export class TodolistService {
           )
       ]
     } );
+    this.historyService.push(this.subj.value)
     return this;
   }
 
@@ -44,6 +56,7 @@ export class TodolistService {
       ...L,
       items: L.items.filter(item => items.indexOf(item) === -1 )
     } );
+    this.historyService.push(this.subj.value)
     return this;
   }
 
@@ -54,10 +67,19 @@ export class TodolistService {
         ...L,
         items: L.items.map( item => items.indexOf(item) >= 0 ? {...item, ...data} : item )
       } );
+      
     } else {
       this.delete(...items);
     }
+
+    this.historyService.push(this.subj.value)
     return this;
   }
 
+  undo(){
+    this.subj.next(this.historyService.undo())
+  }
+  redo(){
+    this.subj.next(this.historyService.redo())
+  }
 }

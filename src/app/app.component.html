@@ -4,6 +4,8 @@
     <input type = "text" #data>
 </form>
 
+<button name="undo" (click) = "undo()">Undo</button>
+<button name="redo" (click) = "redo()">Redo</button>
 
 <ul *ngIf = "todoListObs | async as TDL" >
     <li *ngFor = "let item of TDL.items; trackBy: trackById">

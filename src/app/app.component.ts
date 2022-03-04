@@ -41,4 +41,10 @@ export class AppComponent {
   delete(data:TodoItem){
     this.todoListService.delete(data)
   }
+  undo(){
+    this.todoListService.undo()
+  }
+  redo(){
+    this.todoListService.redo()
+  }
 }

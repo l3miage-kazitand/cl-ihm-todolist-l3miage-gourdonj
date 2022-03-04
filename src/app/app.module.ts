@@ -12,7 +12,9 @@ import { AppComponent } from './app.component';
     BrowserModule,
     FormsModule
   ],
-  providers: [],
+  providers: [
+    { provide: 'tdlInitial', useValue: {label: 'L3 MIAGE', items: [] }}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
